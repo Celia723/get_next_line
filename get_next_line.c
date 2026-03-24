@@ -6,7 +6,7 @@
 /*   By: ceboyero <ceboyero@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/23 13:09:56 by ceboyero          #+#    #+#             */
-/*   Updated: 2026/03/23 19:47:35 by ceboyero         ###   ########.fr       */
+/*   Updated: 2026/03/24 13:22:25 by ceboyero         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,16 +24,19 @@ char	*get_next_line(int fd)
 	
 	if (!buffer)
 		return (NULL);
-	
+	line = NULL;
 	//si no ha encon trado el salto de linea se vuelve a llamar y todo se guarda en line 
 	while (!line || !ft_strchr(line, '\n'))
 	{
 		buffer = malloc (sizeof(char) * BUFFER_SIZE + 1);
+		if (!buffer)
+			return (0);
 		num_read = read(fd, buffer, BUFFER_SIZE);
 		buffer[num_read] = '\0';
-		if (line)
-			aux = line; //vriable aux para liberar el buffer
+		aux = line; //vriable aux para liberar el buffer
  		line = ft_strjoin(line,  buffer);
+		free(aux);
+		aux = NULL;
 		free(buffer);
 		buffer = NULL;
 	}//vemos la posicion de la n para extraer la linea real
@@ -46,9 +49,24 @@ char	*get_next_line(int fd)
 	return (real_line);
 }
 
-char	*read_line()
+char	*ft_strdup(const char *s)
 {
-	
+	size_t	size;
+	char	*dup;
+	size_t	i;
+
+	i = 0;
+	size = ft_strlen(s);
+	dup = (char *)malloc(size + 1);
+	if (!dup)
+		return (NULL);
+	while (s[i] != '\0')
+	{
+		dup[i] = s[i];
+		i++;
+	}
+	dup[i] = '\0';
+	return (dup);
 }
 
 
@@ -66,3 +84,8 @@ void	ft_putstr_fd(char *s, int fd)
 	}
 }
 
+int main(int argc, char const *argv[])
+{
+
+	return 0;
+}

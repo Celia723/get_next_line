@@ -6,7 +6,7 @@
 /*   By: ceboyero <ceboyero@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/23 15:58:47 by ceboyero          #+#    #+#             */
-/*   Updated: 2026/03/23 18:11:16 by ceboyero         ###   ########.fr       */
+/*   Updated: 2026/03/24 13:18:51 by ceboyero         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,10 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	size_t	i;
 	size_t	j;
 
-	if (!s1 || !s2)
+	if (!s2)
 		return (NULL);
+	if (!s1)
+		return (ft_strdup(s2));
 	i = 0;
 	j = 0;
 	result = (char *)malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
