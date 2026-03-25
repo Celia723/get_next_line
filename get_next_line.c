@@ -12,42 +12,6 @@
 
 #include "get_next_line.h"
 
-char	*get_next_line(int fd)
-{
-	char			*buffer;
-	int				num_read;
-	static char 	*line;
-	char			*real_line;
-	char			*n_position;
-	char			*aux;
-
-	
-	if (!buffer)
-		return (NULL);
-	line = NULL;
-	//si no ha encon trado el salto de linea se vuelve a llamar y todo se guarda en line 
-	while (!line || !ft_strchr(line, '\n'))
-	{
-		buffer = malloc (sizeof(char) * BUFFER_SIZE + 1);
-		if (!buffer)
-			return (0);
-		num_read = read(fd, buffer, BUFFER_SIZE);
-		buffer[num_read] = '\0';
-		aux = line; //vriable aux para liberar el buffer
- 		line = ft_strjoin(line,  buffer);
-		free(aux);
-		aux = NULL;
-		free(buffer);
-		buffer = NULL;
-	}//vemos la posicion de la n para extraer la linea real
-
-	n_position = ft_strchr(line, '\n');
-	real_line = ft_substr(line, 0, n_position + 1);
-	line = ft_substr (line, n_position + 1, ft_strlen(line) + 1);
-	//escribimos la linea en la consola
-	ft_putstr_fd (real_line, 1); //BORRAR
-	return (real_line);
-}
 
 char	*ft_strdup(const char *s)
 {
@@ -84,8 +48,75 @@ void	ft_putstr_fd(char *s, int fd)
 	}
 }
 
+char	*get_next_line(int fd)
+{
+	
+	static char 	*line;
+	char			*real_line;
+	char			*n_position;
+	char			*buffer;
+	int				num_read;
+	char			*aux;
+	static char		*tmp;
+	
+	
+	//si no ha encon trado el salto de linea se vuelve a llamar y todo se guarda en line 
+	while (!line || !ft_strchr(line, '\n'))
+	{
+		buffer = malloc (sizeof(char) * BUFFER_SIZE + 1);
+		if (!buffer)
+			return (0);
+		num_read = read(fd, buffer, BUFFER_SIZE);
+		if (num_read == -1)
+		{
+			free (buffer);
+			return (NULL);
+		}
+		if (num_read == 0)
+		{
+			free(buffer);
+			if (!tmp)
+			{
+				tmp = line;
+				ft_putstr_fd(tmp, 1);
+				return (tmp);
+			}else
+				return (NULL);
+			
+		}
+		buffer[num_read] = '\0';
+		aux = line; //vriable aux para liberar el buffer
+ 		line = ft_strjoin(line,  buffer);
+		free(aux);
+		aux = NULL;
+		free(buffer);
+		buffer = NULL;
+	}//vemos la posicion de la n para extraer la linea real
+
+	n_position = ft_strchr(line, '\n');
+	real_line = ft_substr(line, 0, (n_position - line) + 1);
+	line = ft_substr (line, (n_position - line) + 1, ft_strlen(line) + 1);
+	//escribimos la linea en la consola
+	ft_putstr_fd (real_line, 1); //BORRAR
+	return (real_line);
+}
+
+
+
+
+
 int main(int argc, char const *argv[])
 {
 
+	int fd = open("text.txt", O_RDONLY);
+	char *line = get_next_line(fd);
+
+	while (line)
+	{
+		line = get_next_line(fd);
+	}
+	
+	
+	
 	return 0;
 }
