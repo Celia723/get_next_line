@@ -6,7 +6,7 @@
 /*   By: ceboyero <ceboyero@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/23 13:09:56 by ceboyero          #+#    #+#             */
-/*   Updated: 2026/03/24 13:22:25 by ceboyero         ###   ########.fr       */
+/*   Updated: 2026/03/26 18:36:22 by ceboyero         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,9 +57,10 @@ char	*get_next_line(int fd)
 	char			*buffer;
 	int				num_read;
 	char			*aux;
-	static char		*tmp;
+	char		*tmp;
 	
 	
+
 	//si no ha encon trado el salto de linea se vuelve a llamar y todo se guarda en line 
 	while (!line || !ft_strchr(line, '\n'))
 	{
@@ -75,15 +76,22 @@ char	*get_next_line(int fd)
 		if (num_read == 0)
 		{
 			free(buffer);
-			if (!tmp)
+			if (line)
+			{
+				tmp = line;
+				line = NULL;
+				return (tmp);	
+			}
+			else if (!line)
+				return(NULL);
+			/* if (!tmp)
 			{
 				tmp = line;
 				ft_putstr_fd(tmp, 1);
 				return (tmp);
 			}else
-				return (NULL);
-			
-		}
+				return (NULL); */
+		}	
 		buffer[num_read] = '\0';
 		aux = line; //vriable aux para liberar el buffer
  		line = ft_strjoin(line,  buffer);
@@ -92,28 +100,35 @@ char	*get_next_line(int fd)
 		free(buffer);
 		buffer = NULL;
 	}//vemos la posicion de la n para extraer la linea real
-
+	aux = line;
 	n_position = ft_strchr(line, '\n');
 	real_line = ft_substr(line, 0, (n_position - line) + 1);
 	line = ft_substr (line, (n_position - line) + 1, ft_strlen(line) + 1);
+	
+	free (aux);
+	aux = NULL;
 	//escribimos la linea en la consola
 	ft_putstr_fd (real_line, 1); //BORRAR
 	return (real_line);
-}
+	}
 
 
 
 
 
-int main(int argc, char const *argv[])
+
+int main()
 {
 
 	int fd = open("text.txt", O_RDONLY);
-	char *line = get_next_line(fd);
+	char *line ;
 
-	while (line)
+	while ( (line=get_next_line(fd)))
 	{
-		line = get_next_line(fd);
+		free (line);
+		line = NULL;
+		
+		//deberia liberr linea aqui?
 	}
 	
 	
