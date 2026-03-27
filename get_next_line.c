@@ -6,7 +6,7 @@
 /*   By: ceboyero <ceboyero@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/23 13:09:56 by ceboyero          #+#    #+#             */
-/*   Updated: 2026/03/26 18:36:22 by ceboyero         ###   ########.fr       */
+/*   Updated: 2026/03/27 12:29:49 by ceboyero         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ char	*get_next_line(int fd)
 	char			*aux;
 	char		*tmp;
 	
-	
 
 	//si no ha encon trado el salto de linea se vuelve a llamar y todo se guarda en line 
 	while (!line || !ft_strchr(line, '\n'))
@@ -70,6 +69,7 @@ char	*get_next_line(int fd)
 		num_read = read(fd, buffer, BUFFER_SIZE);
 		if (num_read == -1)
 		{
+			
 			free (buffer);
 			return (NULL);
 		}
@@ -80,7 +80,7 @@ char	*get_next_line(int fd)
 			{
 				tmp = line;
 				line = NULL;
-				return (tmp);	
+				return (tmp);
 			}
 			else if (!line)
 				return(NULL);
@@ -107,8 +107,6 @@ char	*get_next_line(int fd)
 	
 	free (aux);
 	aux = NULL;
-	//escribimos la linea en la consola
-	ft_putstr_fd (real_line, 1); //BORRAR
 	return (real_line);
 	}
 
@@ -116,7 +114,7 @@ char	*get_next_line(int fd)
 
 
 
-
+/* 
 int main()
 {
 
@@ -135,3 +133,4 @@ int main()
 	
 	return 0;
 }
+ */
