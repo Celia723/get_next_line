@@ -6,7 +6,7 @@
 /*   By: ceboyero <ceboyero@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/23 13:09:56 by ceboyero          #+#    #+#             */
-/*   Updated: 2026/03/30 17:35:54 by ceboyero         ###   ########.fr       */
+/*   Updated: 2026/03/30 17:52:20 by ceboyero         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,6 +117,7 @@ char	*get_next_line(int fd)
 	static char 	*line[1024];
 	char			*buffer;
 	int				num_read;
+	char			*newline;
 	
 	while (!line[fd] || !ft_strchr(line[fd], '\n'))
 	{
@@ -132,7 +133,13 @@ char	*get_next_line(int fd)
 			return(how_many_does_it_read(num_read, buffer, &(line[fd])));
 		handle_buffer(&buffer, num_read, &(line[fd]));
 	}//vemos la posicion de la n para extraer la linea real
-	return (separate_rial_line(&(line[fd])));
+	newline = separate_rial_line(&(line[fd]));
+	if(!newline)
+	{
+		free (line[fd]);
+		line[fd] = NULL;
+	}
+	return (newline);
 }
 
 
