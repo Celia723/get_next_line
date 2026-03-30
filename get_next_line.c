@@ -6,25 +6,12 @@
 /*   By: ceboyero <ceboyero@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/23 13:09:56 by ceboyero          #+#    #+#             */
-/*   Updated: 2026/03/30 17:52:20 by ceboyero         ###   ########.fr       */
+/*   Updated: 2026/03/30 18:47:44 by ceboyero         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-void	ft_putstr_fd(char *s, int fd)
-{
-	int	i;
-
-	if (!s)
-		return ;
-	i = 0;
-	while (s[i] != '\0')
-	{
-		write(fd, &s[i], 1);
-		i++;
-	}
-}
 char	*ft_strdup(const char *s)
 {
 	size_t	size;
@@ -45,27 +32,26 @@ char	*ft_strdup(const char *s)
 	return (dup);
 }
 
-
-
 char	*separate_rial_line(char **line)
 {
-	char 	*aux;
+	char	*aux;
 	char	*n_position;
 	char	*real_line;
-	
+
 	aux = *line;
 	n_position = ft_strchr(*line, '\n');
 	real_line = ft_substr(*line, 0, (n_position - *line) + 1);
 	if (*(n_position + 1))
 	{
-		*line = ft_substr (*line, (n_position - *line) + 1, ft_strlen(*line) + 1);	
+		*line = ft_substr (*line,
+				(n_position - *line) + 1, ft_strlen(*line) + 1);
 		free (aux);
 		aux = NULL;
 	}
 	else
 	{
 		free(*line);
-		*line = NULL;	
+		*line = NULL;
 	}
 	return (real_line);
 }
@@ -75,8 +61,8 @@ void	handle_buffer(char **buffer, int num_read, char **line)
 	char	*aux;
 
 	(*buffer)[num_read] = '\0';
-	aux = *line; //vriable aux para liberar el buffer
- 	*line = ft_strjoin(*line,  *buffer);
+	aux = *line;
+	*line = ft_strjoin(*line, *buffer);
 	free(aux);
 	aux = NULL;
 	free(*buffer);
@@ -86,7 +72,7 @@ void	handle_buffer(char **buffer, int num_read, char **line)
 char	*how_many_does_it_read(int num_read, char *buffer, char **line)
 {
 	char	*tmp;
-	
+
 	if (num_read == -1)
 	{
 		free (buffer);
@@ -103,49 +89,38 @@ char	*how_many_does_it_read(int num_read, char *buffer, char **line)
 			*line = NULL;
 			return (tmp);
 		}
-		else if (*line && !**line)
-			return(NULL);
-		else if (!*line)
-			return(NULL);
+		free (*line);
+		*line = NULL;
+		return (NULL);
 	}
 	return (NULL);
 }
 
 char	*get_next_line(int fd)
 {
-	
-	static char 	*line[1024];
+	static char		*line[1024];
 	char			*buffer;
 	int				num_read;
 	char			*newline;
-	
+
 	while (!line[fd] || !ft_strchr(line[fd], '\n'))
 	{
 		buffer = malloc (sizeof(char) * BUFFER_SIZE + 1);
 		if (!buffer)
-			{
-				free (line[fd]);
-				line[fd] = NULL;
-				return (NULL);
-			}
+			return (free (line[fd]), line[fd] = NULL, NULL);
 		num_read = read(fd, buffer, BUFFER_SIZE);
 		if (num_read == 0 || num_read == -1)
-			return(how_many_does_it_read(num_read, buffer, &(line[fd])));
+			return (how_many_does_it_read(num_read, buffer, &(line[fd])));
 		handle_buffer(&buffer, num_read, &(line[fd]));
-	}//vemos la posicion de la n para extraer la linea real
+	}
 	newline = separate_rial_line(&(line[fd]));
-	if(!newline)
+	if (!newline)
 	{
 		free (line[fd]);
 		line[fd] = NULL;
 	}
 	return (newline);
 }
-
-
-
-
-
 
 /* int main()
 {

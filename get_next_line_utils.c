@@ -6,7 +6,7 @@
 /*   By: ceboyero <ceboyero@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/23 15:58:47 by ceboyero          #+#    #+#             */
-/*   Updated: 2026/03/30 16:29:01 by ceboyero         ###   ########.fr       */
+/*   Updated: 2026/03/30 18:48:00 by ceboyero         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ size_t	ft_strlen(const char *str)
 		i++;
 	return (i);
 }
+
 static void	fill(char *result, char const *s, unsigned int start, size_t len)
 {
 	size_t	i;
