@@ -6,13 +6,25 @@
 /*   By: ceboyero <ceboyero@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/23 13:09:56 by ceboyero          #+#    #+#             */
-/*   Updated: 2026/03/27 12:29:49 by ceboyero         ###   ########.fr       */
+/*   Updated: 2026/03/30 17:35:54 by ceboyero         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
+void	ft_putstr_fd(char *s, int fd)
+{
+	int	i;
 
+	if (!s)
+		return ;
+	i = 0;
+	while (s[i] != '\0')
+	{
+		write(fd, &s[i], 1);
+		i++;
+	}
+}
 char	*ft_strdup(const char *s)
 {
 	size_t	size;
@@ -34,95 +46,111 @@ char	*ft_strdup(const char *s)
 }
 
 
-void	ft_putstr_fd(char *s, int fd)
-{
-	int	i;
 
-	if (!s)
-		return ;
-	i = 0;
-	while (s[i] != '\0')
+char	*separate_rial_line(char **line)
+{
+	char 	*aux;
+	char	*n_position;
+	char	*real_line;
+	
+	aux = *line;
+	n_position = ft_strchr(*line, '\n');
+	real_line = ft_substr(*line, 0, (n_position - *line) + 1);
+	if (*(n_position + 1))
 	{
-		write(fd, &s[i], 1);
-		i++;
+		*line = ft_substr (*line, (n_position - *line) + 1, ft_strlen(*line) + 1);	
+		free (aux);
+		aux = NULL;
 	}
+	else
+	{
+		free(*line);
+		*line = NULL;	
+	}
+	return (real_line);
+}
+
+void	handle_buffer(char **buffer, int num_read, char **line)
+{
+	char	*aux;
+
+	(*buffer)[num_read] = '\0';
+	aux = *line; //vriable aux para liberar el buffer
+ 	*line = ft_strjoin(*line,  *buffer);
+	free(aux);
+	aux = NULL;
+	free(*buffer);
+	*buffer = NULL;
+}
+
+char	*how_many_does_it_read(int num_read, char *buffer, char **line)
+{
+	char	*tmp;
+	
+	if (num_read == -1)
+	{
+		free (buffer);
+		free (*line);
+		*line = NULL;
+		return (NULL);
+	}
+	else if (num_read == 0)
+	{
+		free(buffer);
+		if (*line && **line)
+		{
+			tmp = *line;
+			*line = NULL;
+			return (tmp);
+		}
+		else if (*line && !**line)
+			return(NULL);
+		else if (!*line)
+			return(NULL);
+	}
+	return (NULL);
 }
 
 char	*get_next_line(int fd)
 {
 	
-	static char 	*line;
-	char			*real_line;
-	char			*n_position;
+	static char 	*line[1024];
 	char			*buffer;
 	int				num_read;
-	char			*aux;
-	char		*tmp;
 	
-
-	//si no ha encon trado el salto de linea se vuelve a llamar y todo se guarda en line 
-	while (!line || !ft_strchr(line, '\n'))
+	while (!line[fd] || !ft_strchr(line[fd], '\n'))
 	{
 		buffer = malloc (sizeof(char) * BUFFER_SIZE + 1);
 		if (!buffer)
-			return (0);
-		num_read = read(fd, buffer, BUFFER_SIZE);
-		if (num_read == -1)
-		{
-			
-			free (buffer);
-			return (NULL);
-		}
-		if (num_read == 0)
-		{
-			free(buffer);
-			if (line)
 			{
-				tmp = line;
-				line = NULL;
-				return (tmp);
+				free (line[fd]);
+				line[fd] = NULL;
+				return (NULL);
 			}
-			else if (!line)
-				return(NULL);
-			/* if (!tmp)
-			{
-				tmp = line;
-				ft_putstr_fd(tmp, 1);
-				return (tmp);
-			}else
-				return (NULL); */
-		}	
-		buffer[num_read] = '\0';
-		aux = line; //vriable aux para liberar el buffer
- 		line = ft_strjoin(line,  buffer);
-		free(aux);
-		aux = NULL;
-		free(buffer);
-		buffer = NULL;
+		num_read = read(fd, buffer, BUFFER_SIZE);
+		if (num_read == 0 || num_read == -1)
+			return(how_many_does_it_read(num_read, buffer, &(line[fd])));
+		handle_buffer(&buffer, num_read, &(line[fd]));
 	}//vemos la posicion de la n para extraer la linea real
-	aux = line;
-	n_position = ft_strchr(line, '\n');
-	real_line = ft_substr(line, 0, (n_position - line) + 1);
-	line = ft_substr (line, (n_position - line) + 1, ft_strlen(line) + 1);
-	
-	free (aux);
-	aux = NULL;
-	return (real_line);
-	}
+	return (separate_rial_line(&(line[fd])));
+}
 
 
 
 
 
-/* 
-int main()
+
+/* int main()
 {
 
-	int fd = open("text.txt", O_RDONLY);
+	int fd = open("hola.txt", O_RDONLY);
+	//int adios = open("hola.txt", O_RDONLY);
 	char *line ;
 
+	
 	while ( (line=get_next_line(fd)))
 	{
+		ft_putstr_fd(line, 1);
 		free (line);
 		line = NULL;
 		
