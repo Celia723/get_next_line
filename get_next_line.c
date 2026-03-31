@@ -6,12 +6,12 @@
 /*   By: ceboyero <ceboyero@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/23 13:09:56 by ceboyero          #+#    #+#             */
-/*   Updated: 2026/03/31 12:37:30 by ceboyero         ###   ########.fr       */
+/*   Updated: 2026/03/30 18:47:44 by ceboyero         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdio.h>
+
 char	*ft_strdup(const char *s)
 {
 	size_t	size;
@@ -39,7 +39,7 @@ char	*separate_rial_line(char **line)
 	char	*real_line;
 
 	aux = *line;
-	n_position = ft_strchr(*line, 'q');
+	n_position = ft_strchr(*line, '\n');
 	real_line = ft_substr(*line, 0, (n_position - *line) + 1);
 	if (*(n_position + 1))
 	{
@@ -103,7 +103,7 @@ char	*get_next_line(int fd)
 	int				num_read;
 	char			*newline;
 
-	while (!line[fd] || !ft_strchr(line[fd], 'q'))
+	while (!line[fd] || !ft_strchr(line[fd], '\n'))
 	{
 		buffer = malloc (sizeof(char) * BUFFER_SIZE + 1);
 		if (!buffer)
@@ -122,7 +122,7 @@ char	*get_next_line(int fd)
 	return (newline);
 }
 
- int main()
+/* int main()
 {
 
 	int fd = open("hola.txt", O_RDONLY);
@@ -132,8 +132,7 @@ char	*get_next_line(int fd)
 	
 	while ( (line=get_next_line(fd)))
 	{
-		printf("%s", line);
-		printf("%c", '\n');
+		ft_putstr_fd(line, 1);
 		free (line);
 		line = NULL;
 		
@@ -144,4 +143,4 @@ char	*get_next_line(int fd)
 	
 	return 0;
 }
- 
+ */
